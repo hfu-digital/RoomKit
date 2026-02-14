@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# Lockfile
+bun.lock
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/

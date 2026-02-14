@@ -1,0 +1,42 @@
+{
+    "name": "@roomkit/nestjs",
+    "version": "0.1.0",
+    "description": "RoomKit backend library for NestJS — room booking, conflict detection, recurrence, and more",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "typecheck": "tsc --noEmit",
+        "test": "bun test",
+        "clean": "rm -rf dist",
+        "prepublishOnly": "bun run build"
+    },
+    "peerDependencies": {
+        "@nestjs/common": "^10.0.0 || ^11.0.0",
+        "@nestjs/core": "^10.0.0 || ^11.0.0",
+        "reflect-metadata": "^0.1.13 || ^0.2.0"
+    },
+    "peerDependenciesMeta": {
+        "@nestjs/common": {
+            "optional": false
+        },
+        "@nestjs/core": {
+            "optional": false
+        },
+        "reflect-metadata": {
+            "optional": false
+        }
+    },
+    "devDependencies": {
+        "@nestjs/common": "^11.0.0",
+        "@nestjs/core": "^11.0.0",
+        "reflect-metadata": "^0.2.0",
+        "tsup": "^8.0.0",
+        "typescript": "^5.7.0"
+    },
+    "license": "MIT"
+}
