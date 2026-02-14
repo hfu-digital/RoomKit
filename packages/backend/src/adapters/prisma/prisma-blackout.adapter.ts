@@ -1,5 +1,5 @@
 import type { RoomKitPrismaClient } from "../../types/prisma-delegates";
-import type { BlackoutWindow, LocationNode } from "../../types/entities";
+import type { BlackoutWindow } from "../../types/entities";
 import { BlackoutStorage } from "../../interfaces/blackout.storage";
 
 export class PrismaBlackoutAdapter extends BlackoutStorage {

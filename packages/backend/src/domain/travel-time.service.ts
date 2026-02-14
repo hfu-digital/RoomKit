@@ -67,8 +67,8 @@ export class TravelTimeService {
 
         // Check each adjacent pair
         for (let i = 0; i < schedule.length - 1; i++) {
-            const current = schedule[i];
-            const next = schedule[i + 1];
+            const current = schedule[i]!;
+            const next = schedule[i + 1]!;
 
             // Resolve both rooms to their campus
             const currentCampus = await this.resolveCampus(current.roomId);

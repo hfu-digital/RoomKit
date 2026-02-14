@@ -28,10 +28,10 @@ export class ApiClient {
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({ message: response.statusText }));
-            throw new Error(error.message || `Request failed: ${response.status}`);
+            throw new Error((error as any).message || `Request failed: ${response.status}`);
         }
 
-        return response.json();
+        return response.json() as Promise<T>;
     }
 
     get<T>(path: string, params?: Record<string, string>): Promise<T> {

@@ -160,7 +160,7 @@ export function BookingForm({
                     <select
                         id="rk-bf-room"
                         value={values.roomId}
-                        onChange={(e) => updateField("roomId", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateField("roomId", e.target.value)}
                         style={inputStyle}
                         required
                     >
@@ -179,7 +179,7 @@ export function BookingForm({
                         id="rk-bf-room-id"
                         type="text"
                         value={values.roomId}
-                        onChange={(e) => updateField("roomId", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("roomId", e.target.value)}
                         style={inputStyle}
                         required
                         placeholder="Enter room ID"
@@ -193,7 +193,7 @@ export function BookingForm({
                     id="rk-bf-title"
                     type="text"
                     value={values.title}
-                    onChange={(e) => updateField("title", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("title", e.target.value)}
                     style={inputStyle}
                     required
                     placeholder="Booking title"
@@ -205,7 +205,7 @@ export function BookingForm({
                 <textarea
                     id="rk-bf-desc"
                     value={values.description}
-                    onChange={(e) => updateField("description", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("description", e.target.value)}
                     style={textareaStyle}
                     placeholder="Optional description"
                 />
@@ -218,7 +218,7 @@ export function BookingForm({
                         id="rk-bf-starts"
                         type="datetime-local"
                         value={values.startsAt}
-                        onChange={(e) => updateField("startsAt", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("startsAt", e.target.value)}
                         style={inputStyle}
                         required
                     />
@@ -229,7 +229,7 @@ export function BookingForm({
                         id="rk-bf-ends"
                         type="datetime-local"
                         value={values.endsAt}
-                        onChange={(e) => updateField("endsAt", e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("endsAt", e.target.value)}
                         style={inputStyle}
                         required
                     />
@@ -243,7 +243,7 @@ export function BookingForm({
                         <select
                             id="rk-bf-purpose"
                             value={values.purposeType}
-                            onChange={(e) => updateField("purposeType", e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateField("purposeType", e.target.value)}
                             style={inputStyle}
                             required
                         >
@@ -257,7 +257,7 @@ export function BookingForm({
                             id="rk-bf-purpose"
                             type="text"
                             value={values.purposeType}
-                            onChange={(e) => updateField("purposeType", e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("purposeType", e.target.value)}
                             style={inputStyle}
                             required
                             placeholder="e.g. lecture, seminar"
@@ -272,7 +272,7 @@ export function BookingForm({
                         min="0"
                         max="100"
                         value={values.priority}
-                        onChange={(e) => updateField("priority", Number(e.target.value))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("priority", Number(e.target.value))}
                         style={inputStyle}
                     />
                 </div>
@@ -284,7 +284,7 @@ export function BookingForm({
                     id="rk-bf-behalf"
                     type="text"
                     value={values.onBehalfOfId}
-                    onChange={(e) => updateField("onBehalfOfId", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("onBehalfOfId", e.target.value)}
                     style={inputStyle}
                     placeholder="User ID"
                 />
@@ -297,7 +297,7 @@ export function BookingForm({
                     <input
                         type="checkbox"
                         checked={values.recurrenceEnabled}
-                        onChange={(e) => updateField("recurrenceEnabled", e.target.checked)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("recurrenceEnabled", e.target.checked)}
                     />
                     Enable recurring booking
                 </label>
@@ -309,7 +309,7 @@ export function BookingForm({
                             <select
                                 id="rk-bf-rec-freq"
                                 value={values.recurrenceFrequency}
-                                onChange={(e) => updateField("recurrenceFrequency", e.target.value as RecurrenceFrequency | "")}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateField("recurrenceFrequency", e.target.value as RecurrenceFrequency | "")}
                                 style={inputStyle}
                             >
                                 <option value="">Select frequency</option>
@@ -341,7 +341,7 @@ export function BookingForm({
                                 id="rk-bf-rec-end"
                                 type="date"
                                 value={values.recurrenceSeriesEndsAt}
-                                onChange={(e) => updateField("recurrenceSeriesEndsAt", e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("recurrenceSeriesEndsAt", e.target.value)}
                                 style={inputStyle}
                             />
                         </div>

@@ -1,5 +1,5 @@
 import type { RoomKitPrismaClient } from "../../types/prisma-delegates";
-import type { ExamSession, Booking } from "../../types/entities";
+import type { ExamSession } from "../../types/entities";
 import { ExamStorage } from "../../interfaces/exam.storage";
 
 export class PrismaExamAdapter extends ExamStorage {

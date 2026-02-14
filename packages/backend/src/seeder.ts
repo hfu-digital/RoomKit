@@ -29,7 +29,7 @@ function uuid(): string {
 }
 
 function pickRandom<T>(array: T[]): T {
-    return array[Math.floor(Math.random() * array.length)];
+    return array[Math.floor(Math.random() * array.length)]!;
 }
 
 function chance(pct: number): boolean {
@@ -65,7 +65,7 @@ interface RoomTemplate {
 
 function roomTemplatesForFloor(
     buildingLetter: string,
-    floorPrefix: string,
+    _floorPrefix: string,
     floorIndex: number,
 ): RoomTemplate[] {
     const templates: RoomTemplate[] = [];
@@ -170,10 +170,10 @@ export class RoomKitSeeder {
 
         // Buildings: A, B on North; C, D on South
         const buildingMap: { letter: string; campus: LocationNode }[] = [
-            { letter: "A", campus: campuses[0] },
-            { letter: "B", campus: campuses[0] },
-            { letter: "C", campus: campuses[1] },
-            { letter: "D", campus: campuses[1] },
+            { letter: "A", campus: campuses[0]! },
+            { letter: "B", campus: campuses[0]! },
+            { letter: "C", campus: campuses[1]! },
+            { letter: "D", campus: campuses[1]! },
         ];
 
         const buildings: LocationNode[] = [];
@@ -196,15 +196,15 @@ export class RoomKitSeeder {
         const floors: { node: LocationNode; buildingLetter: string; floorIndex: number }[] = [];
 
         for (let bi = 0; bi < buildings.length; bi++) {
-            const building = buildings[bi];
-            const letter = buildingMap[bi].letter;
+            const building = buildings[bi]!;
+            const letter = buildingMap[bi]!.letter;
 
             for (let fi = 0; fi < floorNames.length; fi++) {
                 const floorSlug = fi === 0 ? "ground" : `floor-${fi}`;
                 const floor = await this.storages.location.createNode({
                     parentId: building.id,
                     type: LocationNodeType.FLOOR,
-                    displayName: floorNames[fi],
+                    displayName: floorNames[fi]!,
                     path: `${building.path}/${floorSlug}`,
                     aliases: [],
                     isActive: true,
@@ -220,9 +220,6 @@ export class RoomKitSeeder {
         }
 
         // ── 2. Rooms ──────────────────────────────────────────
-
-        const allEquipmentTags = ["projector", "whiteboard", "av-system", "lab-fume-hood"];
-        const allAccessibilityAttrs = ["wheelchair", "hearing-loop", "adjustable-desks"];
 
         for (const floorInfo of floors) {
             const templates = roomTemplatesForFloor(
@@ -296,8 +293,8 @@ export class RoomKitSeeder {
         const partitionCount = Math.min(3, largeRooms.length, smallRooms.length);
         for (let i = 0; i < partitionCount; i++) {
             await this.storages.room.createPartition({
-                parentRoomId: largeRooms[i].id,
-                childRoomId: smallRooms[i].id,
+                parentRoomId: largeRooms[i]!.id,
+                childRoomId: smallRooms[i]!.id,
             });
         }
 
@@ -350,13 +347,6 @@ export class RoomKitSeeder {
             study_group: 50,
             open: 25,
         };
-        const statuses: BookingStatus[] = [
-            BookingStatus.REQUESTED,
-            BookingStatus.CONFIRMED,
-            BookingStatus.IN_PROGRESS,
-            BookingStatus.COMPLETED,
-            BookingStatus.CANCELLED,
-        ];
         // Distribution weights: mostly confirmed, some completed, a few others
         const statusWeights = [
             { status: BookingStatus.CONFIRMED, weight: 40 },
@@ -405,7 +395,7 @@ export class RoomKitSeeder {
                         startsAt,
                         endsAt,
                         status: weightedStatus(),
-                        priority: priorityByPurpose[purpose],
+                        priority: priorityByPurpose[purpose]!,
                         purposeType: purpose,
                         idempotencyKey: null,
                         recurrenceRuleId: null,
@@ -442,7 +432,7 @@ export class RoomKitSeeder {
         const maintenanceStart = addDays(weekStart, 3); // Thursday
         maintenanceStart.setHours(18, 0, 0, 0);
         await this.storages.blackout.create({
-            locationNodeId: buildings[0].id,
+            locationNodeId: buildings[0]!.id,
             scope: BlackoutScope.BUILDING,
             title: "Scheduled Maintenance",
             reason: "HVAC system maintenance - Building A",
@@ -483,12 +473,12 @@ export class RoomKitSeeder {
 
         // Campus-specific override: North Campus has longer buffers
         await this.storages.config.set(
-            campuses[0].id,
+            campuses[0]!.id,
             "default_setup_buffer_minutes",
             "10",
         );
         await this.storages.config.set(
-            campuses[0].id,
+            campuses[0]!.id,
             "default_teardown_buffer_minutes",
             "10",
         );

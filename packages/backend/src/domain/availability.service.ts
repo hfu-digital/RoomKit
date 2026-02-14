@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { RoomStorage } from '../interfaces/room.storage';
 import { BookingStorage } from '../interfaces/booking.storage';
 import { BlackoutStorage } from '../interfaces/blackout.storage';
-import { ConfigService } from './config.service';
 import type {
     AvailabilityFilter,
     AvailabilityResult,
@@ -10,7 +9,6 @@ import type {
     TimeSlot,
     Room,
     RoomEquipment,
-    RoomAccessibility,
     OperatingHours,
     Pagination,
 } from '../types/entities';
@@ -21,7 +19,6 @@ export class AvailabilityService {
         private readonly roomStorage: RoomStorage,
         private readonly bookingStorage: BookingStorage,
         private readonly blackoutStorage: BlackoutStorage,
-        private readonly configService: ConfigService,
     ) {}
 
     /**

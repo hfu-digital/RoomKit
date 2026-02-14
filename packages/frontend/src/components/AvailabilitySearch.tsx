@@ -123,7 +123,7 @@ export function AvailabilitySearch({
                             id="rk-avail-starts"
                             type="datetime-local"
                             value={startsAt}
-                            onChange={(e) => setStartsAt(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartsAt(e.target.value)}
                             style={inputStyle}
                         />
                     </div>
@@ -135,7 +135,7 @@ export function AvailabilitySearch({
                             id="rk-avail-ends"
                             type="datetime-local"
                             value={endsAt}
-                            onChange={(e) => setEndsAt(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndsAt(e.target.value)}
                             style={inputStyle}
                         />
                     </div>
@@ -152,7 +152,7 @@ export function AvailabilitySearch({
                         type="number"
                         min="0"
                         value={minCapacity}
-                        onChange={(e) => setMinCapacity(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinCapacity(e.target.value)}
                         style={inputStyle}
                         placeholder="e.g. 30"
                     />
@@ -164,7 +164,7 @@ export function AvailabilitySearch({
                     <select
                         id="rk-avail-cap-type"
                         value={capacityType}
-                        onChange={(e) => setCapacityType(e.target.value as "seated" | "exam" | "standing")}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCapacityType(e.target.value as "seated" | "exam" | "standing")}
                         style={inputStyle}
                     >
                         <option value="seated">Seated</option>
@@ -218,7 +218,7 @@ export function AvailabilitySearch({
                     <select
                         id="rk-avail-location"
                         value={locationScope}
-                        onChange={(e) => setLocationScope(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setLocationScope(e.target.value)}
                         style={inputStyle}
                     >
                         <option value="">All locations</option>

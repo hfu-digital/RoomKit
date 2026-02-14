@@ -1,5 +1,5 @@
 import type { RoomKitPrismaClient } from "../../types/prisma-delegates";
-import type { ConfigEntry, LocationNode } from "../../types/entities";
+import type { ConfigEntry } from "../../types/entities";
 import { ConfigStorage } from "../../interfaces/config.storage";
 import { LocationStorage } from "../../interfaces/location.storage";
 

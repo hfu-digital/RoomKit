@@ -7,10 +7,8 @@ import type {
     AlternativeSuggestion,
     ConflictResolution,
     Booking,
-    Room,
     ConflictRecord,
 } from '../types/entities';
-import { BookingStatus } from '../types/enums';
 
 @Injectable()
 export class ConflictService {

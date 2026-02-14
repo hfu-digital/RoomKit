@@ -47,7 +47,7 @@ export class ExamService {
         if (conflicting.length > 0) {
             throw new ExamCohortOverlapError({
                 cohortId: dto.cohortId,
-                existingSessionId: conflicting[0].id,
+                existingSessionId: conflicting[0]!.id,
                 timeRange: `${dto.bookingData.startsAt.toISOString()} - ${dto.bookingData.endsAt.toISOString()}`,
             });
         }
