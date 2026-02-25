@@ -2,6 +2,8 @@
 
 Open-source, framework-agnostic room booking library for universities and educational institutions. Ships as two packages: **@hfu.digital/roomkit-nestjs** (backend) and **@hfu.digital/roomkit-react** (frontend).
 
+> **[Full Documentation](https://docs.hfu-digital.de/docs/roomkit)** — Getting started guide, API reference, architecture overview, and examples.
+
 ## Features
 
 - **Location hierarchy** — Institution > Campus > Building > Floor > Wing > Room with materialized paths
