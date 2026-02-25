@@ -3,9 +3,15 @@ name: CI
 on:
     push:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         branches: [dev, prod]
     pull_request:
         branches: [dev, prod]
+=======
+        branches: [main, dev]
+    pull_request:
+        branches: [main]
+>>>>>>> Stashed changes
 =======
         branches: [main, dev]
     pull_request:
@@ -16,7 +22,10 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         steps:
