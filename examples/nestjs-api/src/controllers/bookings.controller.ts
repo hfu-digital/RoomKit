@@ -10,8 +10,8 @@ import {
     HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { BookingService } from "@roomkit/nestjs";
-import type { CreateBookingDto, UpdateBookingDto } from "@roomkit/nestjs";
+import { BookingService } from "@hfu.digital/roomkit-nestjs";
+import type { CreateBookingDto, UpdateBookingDto } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Bookings")
 @Controller("bookings")

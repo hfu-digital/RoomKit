@@ -1,5 +1,5 @@
 {
-    "name": "@roomkit/react",
+    "name": "@hfu.digital/roomkit-react",
     "version": "0.1.0",
     "description": "RoomKit React components and hooks for room booking UIs",
     "main": "dist/index.js",
@@ -59,9 +59,17 @@
         "vite": "^6.0.0",
         "vite-plugin-dts": "^4.0.0"
     },
+<<<<<<< Updated upstream
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     },
     "license": "MIT"
+=======
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    }
+>>>>>>> Stashed changes
 }

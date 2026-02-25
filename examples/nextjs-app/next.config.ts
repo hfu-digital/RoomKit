@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    transpilePackages: ["@roomkit/react"],
+    transpilePackages: ["@hfu.digital/roomkit-react"],
 };
 
 export default nextConfig;

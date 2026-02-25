@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useLocationTree } from "@roomkit/react";
-import type { LocationTreeNode } from "@roomkit/react";
+import { useLocationTree } from "@hfu.digital/roomkit-react";
+import type { LocationTreeNode } from "@hfu.digital/roomkit-react";
 
 export default function LocationsPage() {
     const { data: tree, isLoading, error } = useLocationTree();

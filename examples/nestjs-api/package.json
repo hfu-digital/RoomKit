@@ -12,7 +12,7 @@
         "@nestjs/core": "^11.0.0",
         "@nestjs/platform-fastify": "^11.0.0",
         "@nestjs/swagger": "^11.0.0",
-        "@roomkit/nestjs": "workspace:*",
+        "@hfu.digital/roomkit-nestjs": "workspace:*",
         "@prisma/client": "^6.0.0",
         "reflect-metadata": "^0.2.0"
     },

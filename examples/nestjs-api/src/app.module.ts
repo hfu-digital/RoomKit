@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { RoomKitModule, PrismaRoomKitAdapter } from "@roomkit/nestjs";
+import { RoomKitModule, PrismaRoomKitAdapter } from "@hfu.digital/roomkit-nestjs";
 import { PrismaService } from "./prisma.service";
 import { LocationsController } from "./controllers/locations.controller";
 import { RoomsController } from "./controllers/rooms.controller";

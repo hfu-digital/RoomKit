@@ -1,4 +1,4 @@
-// @roomkit/react — barrel export
+// @hfu.digital/roomkit-react — barrel export
 
 // Provider
 export { RoomKitProvider, useRoomKitConfig } from "./context/RoomKitProvider";

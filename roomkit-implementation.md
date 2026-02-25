@@ -68,8 +68,8 @@ Read the project files /mnt/project/library-skill.md and /mnt/project/roomkit-fi
 Scaffold a Bun + Turborepo monorepo called `roomkit-monorepo` following the Kit Library Scaffold pattern exactly. Use these specifics:
 
 - npm scope: @roomkit
-- Backend package: @roomkit/nestjs (packages/backend)
-- Frontend package: @roomkit/react (packages/frontend)
+- Backend package: @hfu.digital/roomkit-nestjs (packages/backend)
+- Frontend package: @hfu.digital/roomkit-react (packages/frontend)
 - Both packages should have empty src/index.ts barrel exports for now
 - Root configs: turbo.json, tsconfig.base.json, bunfig.toml, .gitignore
 - MIT LICENSE
@@ -1127,7 +1127,7 @@ Write the full README.md for roomkit-monorepo following the Kit Library Scaffold
 1. Overview — What RoomKit is: an open-source, framework-agnostic room booking library with NestJS + React packages
 2. Features — Core features list: location hierarchy, conflict detection, partition-aware scheduling, recurrence, blackouts, exam mode, bulk operations, priority-based displacement, travel time validation
 3. Prerequisites — Bun >= 1.0
-4. Quick Start — bun add @roomkit/nestjs @roomkit/react
+4. Quick Start — bun add @hfu.digital/roomkit-nestjs @hfu.digital/roomkit-react
 5. Prisma Schema Reference — Link to PRISMA_SCHEMA.md + inline snippet of the most important models
 6. Backend Integration — Full code example of RoomKitModule.register() with PrismaRoomKitAdapter
 7. Frontend Integration — Full code example of RoomKitProvider + useAvailability + BookingForm
@@ -1149,7 +1149,7 @@ Also create CONTRIBUTING.md with PR guidelines, architecture overview, and test 
 ```
 Create a fully runnable example NestJS API in roomkit-monorepo/examples/nestjs-api:
 
-1. package.json with @nestjs/* deps, @roomkit/nestjs (workspace:*), prisma, @prisma/client
+1. package.json with @nestjs/* deps, @hfu.digital/roomkit-nestjs (workspace:*), prisma, @prisma/client
 2. prisma/schema.prisma — SQLite database with all RoomKit models from PRISMA_SCHEMA.md
 3. src/app.module.ts — Imports RoomKitModule.register() with PrismaRoomKitAdapter
 4. src/controllers/:
@@ -1174,7 +1174,7 @@ This should be a working API that someone can clone and run in 2 minutes.
 ```
 Create a minimal Next.js example app in roomkit-monorepo/examples/nextjs-app:
 
-1. package.json with next, react, @roomkit/react (workspace:*)
+1. package.json with next, react, @hfu.digital/roomkit-react (workspace:*)
 2. src/app/layout.tsx — Wraps children in RoomKitProvider pointing to localhost:3000/api
 3. src/app/page.tsx — Main page with:
    - AvailabilitySearch component

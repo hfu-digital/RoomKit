@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { AvailabilityService } from "@roomkit/nestjs";
-import type { AvailabilityFilter, Pagination } from "@roomkit/nestjs";
+import { AvailabilityService } from "@hfu.digital/roomkit-nestjs";
+import type { AvailabilityFilter, Pagination } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Availability")
 @Controller("availability")

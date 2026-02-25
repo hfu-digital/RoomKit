@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useAvailability, useBookings } from "@roomkit/react";
-import type { AvailabilityResultItem } from "@roomkit/react";
+import { useAvailability, useBookings } from "@hfu.digital/roomkit-react";
+import type { AvailabilityResultItem } from "@hfu.digital/roomkit-react";
 
 /** Helper: round a Date to the nearest hour. */
 function roundToHour(date: Date): Date {

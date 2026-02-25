@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { ExamService } from "@roomkit/nestjs";
-import type { CreateBookingDto, ExamLayoutType } from "@roomkit/nestjs";
+import { ExamService } from "@hfu.digital/roomkit-nestjs";
+import type { CreateBookingDto, ExamLayoutType } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Exams")
 @Controller("exams")

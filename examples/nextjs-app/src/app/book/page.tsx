@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useCreateBooking } from "@roomkit/react";
-import type { Booking } from "@roomkit/react";
+import { useCreateBooking } from "@hfu.digital/roomkit-react";
+import type { Booking } from "@hfu.digital/roomkit-react";
 
 export default function BookPage() {
     const searchParams = useSearchParams();

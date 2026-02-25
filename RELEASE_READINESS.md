@@ -30,9 +30,9 @@ src/seeder.ts(28,12): error TS2304: Cannot find name 'crypto'.
 
 ### 2. Missing `"exports"` field in both package.json files
 
-Both `@roomkit/nestjs` and `@roomkit/react` use the legacy `main`/`module`/`types` triple. Modern Node (>=16.x) and bundlers increasingly rely on the `"exports"` map. Without it:
+Both `@hfu.digital/roomkit-nestjs` and `@hfu.digital/roomkit-react` use the legacy `main`/`module`/`types` triple. Modern Node (>=16.x) and bundlers increasingly rely on the `"exports"` map. Without it:
 
-- `import "@roomkit/nestjs"` may resolve incorrectly in ESM-only projects
+- `import "@hfu.digital/roomkit-nestjs"` may resolve incorrectly in ESM-only projects
 - Subpath imports (if ever needed) are impossible
 - TypeScript `"moduleResolution": "bundler"` resolves correctly, but `"node16"` does not
 
@@ -59,7 +59,7 @@ npm renders these on the package page. Without them:
 
 ### 4. No frontend tests — zero coverage
 
-`@roomkit/react` has **0 test files**. The backend has 121 passing tests across 6 files, but the frontend ships completely untested. At minimum, test:
+`@hfu.digital/roomkit-react` has **0 test files**. The backend has 121 passing tests across 6 files, but the frontend ships completely untested. At minimum, test:
 
 - `ApiClient` — request/error/abort behavior
 - Each hook — loading/success/error states, abort on unmount

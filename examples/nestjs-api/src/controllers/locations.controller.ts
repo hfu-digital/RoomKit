@@ -11,8 +11,8 @@ import {
     HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { LocationService, LocationStorage } from "@roomkit/nestjs";
-import type { CreateLocationNodeDto, UpdateLocationNodeDto } from "@roomkit/nestjs";
+import { LocationService, LocationStorage } from "@hfu.digital/roomkit-nestjs";
+import type { CreateLocationNodeDto, UpdateLocationNodeDto } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Locations")
 @Controller("locations")

@@ -11,8 +11,8 @@ import {
     HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { RoomService, RoomStorage } from "@roomkit/nestjs";
-import type { CreateRoomDto, UpdateRoomDto, RoomFilterDto } from "@roomkit/nestjs";
+import { RoomService, RoomStorage } from "@hfu.digital/roomkit-nestjs";
+import type { CreateRoomDto, UpdateRoomDto, RoomFilterDto } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Rooms")
 @Controller("rooms")

@@ -1,6 +1,6 @@
 # RoomKit NestJS API Example
 
-A fully runnable example NestJS API demonstrating how to integrate `@roomkit/nestjs` with Prisma and Fastify.
+A fully runnable example NestJS API demonstrating how to integrate `@hfu.digital/roomkit-nestjs` with Prisma and Fastify.
 
 ## Prerequisites
 

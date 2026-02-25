@@ -2,14 +2,23 @@ name: CI
 
 on:
     push:
+<<<<<<< Updated upstream
         branches: [dev, prod]
     pull_request:
         branches: [dev, prod]
+=======
+        branches: [main, dev]
+    pull_request:
+        branches: [main]
+>>>>>>> Stashed changes
 
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         steps:
             - uses: actions/checkout@v4
 

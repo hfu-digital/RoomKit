@@ -1,6 +1,6 @@
 # RoomKit Next.js Example
 
-Minimal Next.js 15 app demonstrating `@roomkit/react` hooks and provider.
+Minimal Next.js 15 app demonstrating `@hfu.digital/roomkit-react` hooks and provider.
 
 ## Pages
 

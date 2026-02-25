@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What is RoomKit
 
-Open-source, framework-agnostic room booking library for universities. Ships as two packages in a Turborepo monorepo: **@roomkit/nestjs** (backend) and **@roomkit/react** (frontend).
+Open-source, framework-agnostic room booking library for universities. Ships as two packages in a Turborepo monorepo: **@hfu.digital/roomkit-nestjs** (backend) and **@hfu.digital/roomkit-react** (frontend).
 
 ## Commands
 
@@ -38,8 +38,8 @@ bun run dev                            # Next.js dev server
 ### Monorepo Layout
 
 ```
-packages/backend/    → @roomkit/nestjs   (tsup build)
-packages/frontend/   → @roomkit/react    (Vite lib build)
+packages/backend/    → @hfu.digital/roomkit-nestjs   (tsup build)
+packages/frontend/   → @hfu.digital/roomkit-react    (Vite lib build)
 examples/nestjs-api/ → Example NestJS integration
 examples/nextjs-app/ → Example Next.js integration
 ```

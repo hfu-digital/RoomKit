@@ -1,4 +1,4 @@
-// @roomkit/nestjs — barrel export
+// @hfu.digital/roomkit-nestjs — barrel export
 
 // ─── Module ────────────────────────────────────────────────────
 export { RoomKitModule } from "./module";

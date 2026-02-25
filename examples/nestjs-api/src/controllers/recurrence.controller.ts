@@ -1,7 +1,7 @@
 import { Controller, Post, Put, Param, Body } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { RecurrenceService } from "@roomkit/nestjs";
-import type { CreateBookingDto, UpdateBookingDto, RecurrenceRule } from "@roomkit/nestjs";
+import { RecurrenceService } from "@hfu.digital/roomkit-nestjs";
+import type { CreateBookingDto, UpdateBookingDto, RecurrenceRule } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Recurrence")
 @Controller("recurrence")

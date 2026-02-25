@@ -10,8 +10,8 @@ import {
     HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
-import { BlackoutService } from "@roomkit/nestjs";
-import type { BlackoutScope } from "@roomkit/nestjs";
+import { BlackoutService } from "@hfu.digital/roomkit-nestjs";
+import type { BlackoutScope } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Blackouts")
 @Controller("blackouts")

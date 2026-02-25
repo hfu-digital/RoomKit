@@ -23,8 +23,8 @@ bun run test
 
 RoomKit is a monorepo with two publishable packages:
 
-- **`packages/backend`** (`@roomkit/nestjs`) — NestJS module providing room booking domain logic
-- **`packages/frontend`** (`@roomkit/react`) — React hooks and components for booking UIs
+- **`packages/backend`** (`@hfu.digital/roomkit-nestjs`) — NestJS module providing room booking domain logic
+- **`packages/frontend`** (`@hfu.digital/roomkit-react`) — React hooks and components for booking UIs
 
 ### Backend Architecture
 

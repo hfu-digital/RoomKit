@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
     title: "RoomKit Demo",
-    description: "Minimal Next.js example showcasing @roomkit/react",
+    description: "Minimal Next.js example showcasing @hfu.digital/roomkit-react",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

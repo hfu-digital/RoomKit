@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Param, Body } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { BulkOperationService, BulkOperationStorage } from "@roomkit/nestjs";
-import type { SemesterImportPayload } from "@roomkit/nestjs";
+import { BulkOperationService, BulkOperationStorage } from "@hfu.digital/roomkit-nestjs";
+import type { SemesterImportPayload } from "@hfu.digital/roomkit-nestjs";
 
 @ApiTags("Bulk Operations")
 @Controller("bulk-operations")

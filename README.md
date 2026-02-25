@@ -1,6 +1,6 @@
 # RoomKit
 
-Open-source, framework-agnostic room booking library for universities and educational institutions. Ships as two packages: **@roomkit/nestjs** (backend) and **@roomkit/react** (frontend).
+Open-source, framework-agnostic room booking library for universities and educational institutions. Ships as two packages: **@hfu.digital/roomkit-nestjs** (backend) and **@hfu.digital/roomkit-react** (frontend).
 
 ## Features
 
@@ -29,8 +29,8 @@ Open-source, framework-agnostic room booking library for universities and educat
 
 ```bash
 # Install packages
-bun add @roomkit/nestjs    # Backend
-bun add @roomkit/react     # Frontend
+bun add @hfu.digital/roomkit-nestjs    # Backend
+bun add @hfu.digital/roomkit-react     # Frontend
 ```
 
 ## Backend Integration
@@ -48,7 +48,7 @@ bunx prisma generate
 
 ```typescript
 import { Module } from "@nestjs/common";
-import { RoomKitModule, PrismaRoomKitAdapter } from "@roomkit/nestjs";
+import { RoomKitModule, PrismaRoomKitAdapter } from "@hfu.digital/roomkit-nestjs";
 import { PrismaService } from "./prisma.service";
 
 @Module({
@@ -78,7 +78,7 @@ export class AppModule {}
 
 ```typescript
 import { Controller, Post, Body } from "@nestjs/common";
-import { BookingService, AvailabilityService } from "@roomkit/nestjs";
+import { BookingService, AvailabilityService } from "@hfu.digital/roomkit-nestjs";
 
 @Controller("bookings")
 export class BookingsController {
@@ -103,7 +103,7 @@ import {
     AvailabilitySearch,
     RoomCard,
     BookingForm,
-} from "@roomkit/react";
+} from "@hfu.digital/roomkit-react";
 
 function App() {
     return (
@@ -309,7 +309,7 @@ bun run dev
 ```
 roomkit-monorepo/
 ├── packages/
-│   ├── backend/          # @roomkit/nestjs
+│   ├── backend/          # @hfu.digital/roomkit-nestjs
 │   │   └── src/
 │   │       ├── domain/       # Business logic services
 │   │       ├── interfaces/   # Storage abstract classes
@@ -320,7 +320,7 @@ roomkit-monorepo/
 │   │       ├── types/        # TypeScript types
 │   │       ├── module.ts     # NestJS DynamicModule
 │   │       └── seeder.ts     # Test data seeder
-│   └── frontend/         # @roomkit/react
+│   └── frontend/         # @hfu.digital/roomkit-react
 │       └── src/
 │           ├── components/   # React components
 │           ├── hooks/        # React hooks

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-**@roomkit/nestjs**
+**@hfu.digital/roomkit-nestjs**
 - Location hierarchy management (Institution > Campus > Building > Floor > Wing > Room) with materialized paths
 - Room management with capacity types (seated, exam, standing), equipment, accessibility, and partition trees
 - Booking lifecycle with state machine (REQUESTED > CONFIRMED > IN_PROGRESS > COMPLETED, CANCELLED from any non-terminal)
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 15 typed domain error classes with machine-readable codes and structured context
 - NestJS DynamicModule registration with optional feature flags
 
-**@roomkit/react**
+**@hfu.digital/roomkit-react**
 - `RoomKitProvider` context for API URL and fetch options configuration
 - 8 query hooks: `useAvailability`, `useBooking`, `useBookings`, `useRoomDetail`, `useLocationTree`, `useBlackouts`, `useExamSessions`, `useRecurrence`
 - 3 mutation hooks: `useCreateBooking`, `useModifyBooking`, `useCancelBooking`
