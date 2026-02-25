@@ -70,16 +70,22 @@
         "typescript": "^5.7.0"
     },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     },
     "license": "MIT"
 =======
+=======
+>>>>>>> Stashed changes
     "license": "MIT",
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }
