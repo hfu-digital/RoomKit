@@ -61,6 +61,7 @@
     },
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
@@ -69,12 +70,17 @@
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     "license": "MIT",
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
