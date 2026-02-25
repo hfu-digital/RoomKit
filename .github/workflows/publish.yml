@@ -7,7 +7,12 @@ on:
 
 permissions:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     contents: read
+=======
+    contents: write
+    id-token: write
+>>>>>>> Stashed changes
 =======
     contents: write
     id-token: write
@@ -27,7 +32,10 @@ jobs:
             - name: Install dependencies
               run: bun install --frozen-lockfile
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
             - name: Typecheck
               run: bun run typecheck
@@ -51,6 +59,7 @@ jobs:
               with:
                   bun-version: latest
 
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
             - uses: actions/setup-node@v4
               with:
@@ -60,6 +69,13 @@ jobs:
 <<<<<<< Updated upstream
             - name: Publish @roomkit/nestjs
 =======
+=======
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  registry-url: https://registry.npmjs.org
+
+>>>>>>> Stashed changes
             - name: Install dependencies
               run: bun install --frozen-lockfile
 
@@ -67,6 +83,9 @@ jobs:
               run: bun run build
 
             - name: Publish @hfu.digital/roomkit-nestjs
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
               working-directory: packages/backend
               run: bun publish --access public
