@@ -92,25 +92,30 @@ export class ConfigService {
             effectiveConfig.set(entry.key, entry);
         }
 
-        // Walk each ancestor from root toward the target
+        // Walk each ancestor from root toward the target.
+        // Track keys that have been locked (inheritFromParent = false) at a
+        // higher level — deeper nodes cannot override these.
+        const lockedKeys = new Set<string>();
+
         for (const ancestor of hierarchy) {
             const entries = await this.configStorage.getAll(ancestor.id);
             for (const entry of entries) {
-                if (entry.inheritFromParent) {
-                    // Only override if no more-specific value exists,
-                    // but since we walk root-first, we always set
-                    effectiveConfig.set(entry.key, entry);
-                } else {
-                    // Non-inheriting: this value is authoritative at this level
-                    effectiveConfig.set(entry.key, entry);
+                if (lockedKeys.has(entry.key)) {
+                    continue;
+                }
+                effectiveConfig.set(entry.key, entry);
+                if (!entry.inheritFromParent) {
+                    lockedKeys.add(entry.key);
                 }
             }
         }
 
-        // Finally, apply config at the target node itself
+        // Finally, apply config at the target node itself (unless locked)
         const nodeEntries = await this.configStorage.getAll(locationNodeId);
         for (const entry of nodeEntries) {
-            effectiveConfig.set(entry.key, entry);
+            if (!lockedKeys.has(entry.key)) {
+                effectiveConfig.set(entry.key, entry);
+            }
         }
 
         return effectiveConfig;

@@ -174,18 +174,24 @@ export class LocationService {
             .replace(/^-|-$/g, "");
     }
 
+    private static readonly MAX_TREE_DEPTH = 20;
+
     /**
      * Recursively builds a tree from a flat list of nodes.
      */
     private buildTree(
         nodes: LocationNode[],
         parentId: string | null,
+        depth: number = 0,
     ): LocationTreeNode[] {
+        if (depth >= LocationService.MAX_TREE_DEPTH) {
+            return [];
+        }
         const children = nodes.filter((n) => n.parentId === parentId);
 
         return children.map((child) => ({
             ...child,
-            children: this.buildTree(nodes, child.id),
+            children: this.buildTree(nodes, child.id, depth + 1),
         }));
     }
 }

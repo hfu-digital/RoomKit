@@ -244,6 +244,47 @@ The critical contract to implement correctly:
 | `ExamCohortOverlapError` | `EXAM_COHORT_OVERLAP` | `{ cohortId }` |
 | `BulkOperationPartialError` | `BULK_OPERATION_PARTIAL` | `{ succeeded, failed }` |
 
+## Important Notes
+
+### Authentication & Authorization
+
+RoomKit is a **domain logic library** — it does **not** handle authentication or authorization. Fields like `requesterId` and `onBehalfOfId` are opaque strings with no verification. Your application must:
+
+- Authenticate users before calling RoomKit services
+- Implement authorization checks (e.g., who can book which rooms, who can cancel)
+- Scope queries appropriately (e.g., only return a user's own bookings)
+- Add NestJS guards or middleware as needed
+
+### Timezone Handling
+
+All `Date` objects in RoomKit use the server's local timezone. For consistent behavior across deployments:
+
+- Run your server with `TZ=UTC` (e.g., `TZ=UTC bun run start`)
+- Store and transmit dates as ISO 8601 strings in UTC
+- Convert to local timezones only in the frontend presentation layer
+
+### Error Handling
+
+`RoomKitError` subclasses include a `context` object with structured details. When building API responses, **sanitize error context** before returning it to clients to avoid leaking internal IDs or database details:
+
+```typescript
+@Catch(RoomKitError)
+export class RoomKitExceptionFilter implements ExceptionFilter {
+    catch(error: RoomKitError, host: ArgumentsHost) {
+        const response = host.switchToHttp().getResponse();
+        response.status(this.mapStatus(error.code)).json({
+            code: error.code,
+            message: error.message,
+            // Only expose safe context fields
+        });
+    }
+}
+```
+
+### Bulk Operations
+
+Bulk operations (semester import, date shift, batch cancel) use a **best-effort** strategy: individual item failures are counted but do not roll back previously succeeded items. Check the `conflictsDetected` field on the returned `BulkOperation` to identify partial failures.
+
 ## Development
 
 ```bash

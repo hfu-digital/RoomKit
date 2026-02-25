@@ -252,6 +252,8 @@ export class RoomService {
 
     // ─── Private Helpers ─────────────────────────────────────────
 
+    private static readonly MAX_PARTITION_DEPTH = 20;
+
     /**
      * Checks whether `candidateAncestorId` is an ancestor of `roomId`
      * in the given partition tree. Walks up parent links recursively.
@@ -260,7 +262,11 @@ export class RoomService {
         candidateAncestorId: string,
         roomId: string,
         partitions: RoomPartition[],
+        depth: number = 0,
     ): boolean {
+        if (depth >= RoomService.MAX_PARTITION_DEPTH) {
+            return false;
+        }
         // Find all partitions where roomId is the child
         const parentLinks = partitions.filter(
             (p) => p.childRoomId === roomId,
@@ -275,6 +281,7 @@ export class RoomService {
                     candidateAncestorId,
                     link.parentRoomId,
                     partitions,
+                    depth + 1,
                 )
             ) {
                 return true;
