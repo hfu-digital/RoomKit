@@ -110,7 +110,7 @@ export { validateCreateLocationNode } from "./dto/location.dto";
 export type { CreateRoomDto, UpdateRoomDto, RoomFilterDto } from "./dto/room.dto";
 export { validateCreateRoom } from "./dto/room.dto";
 export type { CreateBookingDto, UpdateBookingDto, TransitionBookingDto } from "./dto/booking.dto";
-export { validateCreateBooking } from "./dto/booking.dto";
+export { validateCreateBooking, validateUpdateBooking } from "./dto/booking.dto";
 
 // ─── Prisma Adapters ──────────────────────────────────────────
 export { PrismaRoomKitAdapter } from "./adapters/prisma/prisma-roomkit.adapter";

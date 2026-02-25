@@ -5,7 +5,7 @@ import { ConflictService } from './conflict.service';
 import type { RecurrenceRule, Booking } from '../types/entities';
 import { RecurrenceFrequency, RecurrenceModType } from '../types/enums';
 import type { CreateBookingDto, UpdateBookingDto } from '../dto/booking.dto';
-import { RecurrenceConflictError } from '../errors/roomkit.error';
+import { BookingNotFoundError, RecurrenceConflictError, RoomKitError } from '../errors/roomkit.error';
 
 @Injectable()
 export class RecurrenceService {
@@ -170,7 +170,7 @@ export class RecurrenceService {
     ): Promise<Booking> {
         const booking = await this.bookingStorage.findById(bookingId);
         if (!booking) {
-            throw new Error(`Booking not found: ${bookingId}`);
+            throw new BookingNotFoundError({ bookingId });
         }
 
         // If time or room changed, check for conflicts
@@ -227,17 +227,25 @@ export class RecurrenceService {
     ): Promise<{ newRule: RecurrenceRule; bookings: Booking[] }> {
         const targetBooking = await this.bookingStorage.findById(bookingId);
         if (!targetBooking) {
-            throw new Error(`Booking not found: ${bookingId}`);
+            throw new BookingNotFoundError({ bookingId });
         }
         if (!targetBooking.recurrenceRuleId) {
-            throw new Error(`Booking ${bookingId} is not part of a recurrence series`);
+            throw new RoomKitError(
+                'RECURRENCE_NOT_LINKED',
+                `Booking ${bookingId} is not part of a recurrence series`,
+                { bookingId },
+            );
         }
 
         const originalRule = await this.recurrenceStorage.getRuleById(
             targetBooking.recurrenceRuleId,
         );
         if (!originalRule) {
-            throw new Error(`Recurrence rule not found: ${targetBooking.recurrenceRuleId}`);
+            throw new RoomKitError(
+                'RECURRENCE_RULE_NOT_FOUND',
+                `Recurrence rule not found: ${targetBooking.recurrenceRuleId}`,
+                { ruleId: targetBooking.recurrenceRuleId },
+            );
         }
 
         // Split date: the day before the target booking's date
@@ -328,7 +336,11 @@ export class RecurrenceService {
     ): Promise<{ bookings: Booking[]; skipped: Booking[] }> {
         const rule = await this.recurrenceStorage.getRuleById(ruleId);
         if (!rule) {
-            throw new Error(`Recurrence rule not found: ${ruleId}`);
+            throw new RoomKitError(
+                'RECURRENCE_RULE_NOT_FOUND',
+                `Recurrence rule not found: ${ruleId}`,
+                { ruleId },
+            );
         }
 
         const allInstances = await this.recurrenceStorage.getInstancesByRule(ruleId);

@@ -9,6 +9,7 @@ import type { CreateBookingDto } from '../dto/booking.dto';
 import {
     ExamCohortOverlapError,
     CapacityExceededError,
+    RoomNotFoundError,
 } from '../errors/roomkit.error';
 
 @Injectable()
@@ -71,8 +72,11 @@ export class ExamService {
 
         // Load room for buffer times
         const room = await this.roomStorage.findById(dto.bookingData.roomId);
-        const setupBuffer = room?.setupBufferMinutes ?? 0;
-        const teardownBuffer = room?.teardownBufferMinutes ?? 0;
+        if (!room) {
+            throw new RoomNotFoundError({ roomId: dto.bookingData.roomId });
+        }
+        const setupBuffer = room.setupBufferMinutes;
+        const teardownBuffer = room.teardownBufferMinutes;
 
         // Create booking with buffer times for exam setup/teardown
         const bufferedStartsAt = new Date(
@@ -187,7 +191,7 @@ export class ExamService {
     ): Promise<number> {
         const room = await this.roomStorage.findById(roomId);
         if (!room) {
-            return 0;
+            throw new RoomNotFoundError({ roomId });
         }
 
         switch (layoutType) {

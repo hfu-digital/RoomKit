@@ -41,8 +41,19 @@ export class EventBus {
         if (!handlers) {
             return;
         }
+        const errors: unknown[] = [];
         for (const handler of handlers) {
-            handler(event);
+            try {
+                handler(event);
+            } catch (err) {
+                errors.push(err);
+            }
+        }
+        if (errors.length > 0) {
+            const msg = `${errors.length} event handler(s) failed for "${event.type}"`;
+            const aggregate = new Error(msg);
+            (aggregate as any).handlerErrors = errors;
+            throw aggregate;
         }
     }
 

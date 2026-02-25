@@ -54,11 +54,36 @@ export function validateCreateBooking(dto: CreateBookingDto): string[] {
     if (dto.startsAt && dto.endsAt && dto.startsAt >= dto.endsAt) {
         errors.push("startsAt must be before endsAt");
     }
+    if (
+        dto.startsAt &&
+        dto.endsAt &&
+        dto.startsAt < dto.endsAt &&
+        dto.endsAt.getTime() - dto.startsAt.getTime() < 60_000
+    ) {
+        errors.push("booking duration must be at least 1 minute");
+    }
     if (!dto.purposeType || dto.purposeType.trim().length === 0) {
         errors.push("purposeType is required");
     }
     if (dto.priority !== undefined && (dto.priority < 0 || dto.priority > 100)) {
         errors.push("priority must be between 0 and 100");
+    }
+    return errors;
+}
+
+export function validateUpdateBooking(dto: UpdateBookingDto): string[] {
+    const errors: string[] = [];
+    if (dto.title !== undefined && dto.title.trim().length === 0) {
+        errors.push("title must not be empty");
+    }
+    if (dto.startsAt && dto.endsAt && dto.startsAt >= dto.endsAt) {
+        errors.push("startsAt must be before endsAt");
+    }
+    if (dto.priority !== undefined && (dto.priority < 0 || dto.priority > 100)) {
+        errors.push("priority must be between 0 and 100");
+    }
+    if (dto.purposeType !== undefined && dto.purposeType.trim().length === 0) {
+        errors.push("purposeType must not be empty");
     }
     return errors;
 }

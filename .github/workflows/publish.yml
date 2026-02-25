@@ -19,7 +19,7 @@ jobs:
                   bun-version: latest
 
             - name: Install dependencies
-              run: bun install --frozen-lockfile
+              run: bun install
 
             - name: Typecheck
               run: bun run typecheck
@@ -40,24 +40,29 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  registry-url: https://registry.npmjs.org
+
             - uses: oven-sh/setup-bun@v2
               with:
                   bun-version: latest
 
             - name: Install dependencies
-              run: bun install --frozen-lockfile
+              run: bun install
 
             - name: Build
               run: bun run build
 
             - name: Publish @roomkit/nestjs
               working-directory: packages/backend
-              run: bunx npm publish --access public --provenance
+              run: npm publish --access public --provenance
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: Publish @roomkit/react
               working-directory: packages/frontend
-              run: bunx npm publish --access public --provenance
+              run: npm publish --access public --provenance
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
