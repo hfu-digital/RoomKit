@@ -1,6 +1,6 @@
 {
     "name": "@hfu.digital/roomkit-nestjs",
-    "version": "0.1.0",
+    "version": "2026.04.1",
     "description": "RoomKit backend library for NestJS — room booking, conflict detection, recurrence, and more",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
@@ -69,29 +69,9 @@
         "tsup": "^8.0.0",
         "typescript": "^5.7.0"
     },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    "publishConfig": {
-        "access": "public",
-        "registry": "https://registry.npmjs.org/"
-    },
-    "license": "MIT"
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     "license": "MIT",
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }

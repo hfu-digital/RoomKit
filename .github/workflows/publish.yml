@@ -6,27 +6,25 @@ on:
             - 'v*'
 
 permissions:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    contents: read
-=======
     contents: write
     id-token: write
->>>>>>> Stashed changes
-=======
-    contents: write
-    id-token: write
->>>>>>> Stashed changes
-=======
-    contents: write
-    id-token: write
->>>>>>> Stashed changes
 
 jobs:
-    publish:
+    validate-tag:
         runs-on: ubuntu-latest
+        steps:
+            - name: Validate CalVer tag (vYYYY.MM.N)
+              run: |
+                  TAG="${GITHUB_REF#refs/tags/}"
+                  if [[ ! "$TAG" =~ ^v[0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+$ ]]; then
+                      echo "::error::Tag '$TAG' does not match CalVer pattern vYYYY.MM.N (e.g. v2026.04.1)"
+                      exit 1
+                  fi
+                  echo "Tag '$TAG' is a valid CalVer tag."
 
+    build:
+        needs: validate-tag
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
 
@@ -36,18 +34,9 @@ jobs:
 
             - name: Install dependencies
               run: bun install --frozen-lockfile
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
             - name: Typecheck
               run: bun run typecheck
->>>>>>> Stashed changes
 
             - name: Build
               run: bun run build
@@ -55,8 +44,6 @@ jobs:
             - name: Test
               run: bun run test
 
-<<<<<<< Updated upstream
-=======
     publish:
         needs: build
         runs-on: ubuntu-latest
@@ -67,29 +54,11 @@ jobs:
               with:
                   bun-version: latest
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  registry-url: https://registry.npmjs.org
-
-<<<<<<< Updated upstream
-            - name: Publish @roomkit/nestjs
-=======
-=======
-=======
->>>>>>> Stashed changes
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
                   registry-url: https://registry.npmjs.org
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
             - name: Install dependencies
               run: bun install --frozen-lockfile
 
@@ -97,21 +66,14 @@ jobs:
               run: bun run build
 
             - name: Publish @hfu.digital/roomkit-nestjs
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
               working-directory: packages/backend
-              run: bun publish --access public
+              run: npm publish --access public --provenance
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: Publish @hfu.digital/roomkit-react
               working-directory: packages/frontend
-              run: bun publish --access public
+              run: npm publish --access public --provenance
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
