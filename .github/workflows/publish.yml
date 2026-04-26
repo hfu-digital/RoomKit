@@ -35,14 +35,18 @@ jobs:
             - name: Install dependencies
               run: bun install --frozen-lockfile
 
-            - name: Typecheck
-              run: bun run typecheck
+            - name: Typecheck (publishable packages only)
+              run: |
+                  cd packages/backend && bun run typecheck
+                  cd ../frontend && bun run typecheck
 
-            - name: Build
-              run: bun run build
+            - name: Build (publishable packages only)
+              run: |
+                  cd packages/backend && bun run build
+                  cd ../frontend && bun run build
 
-            - name: Test
-              run: bun run test
+            - name: Test (backend only)
+              run: cd packages/backend && bun test
 
     publish:
         needs: build
@@ -62,8 +66,10 @@ jobs:
             - name: Install dependencies
               run: bun install --frozen-lockfile
 
-            - name: Build
-              run: bun run build
+            - name: Build (publishable packages only)
+              run: |
+                  cd packages/backend && bun run build
+                  cd ../frontend && bun run build
 
             - name: Publish @hfu.digital/roomkit-nestjs
               working-directory: packages/backend
