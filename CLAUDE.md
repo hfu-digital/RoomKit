@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> For project vision, cross-project architecture, and global code style rules, see the root [CLAUDE.md](../CLAUDE.md).
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## What is RoomKit
