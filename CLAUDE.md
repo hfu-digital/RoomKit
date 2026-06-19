@@ -27,15 +27,16 @@ bun run test         # Run all tests
 bun run dev          # Dev mode (persistent)
 bun run clean        # Clean dist directories
 
-# Backend package (packages/backend)
+# Backend package (packages/backend → @hfu.digital/roomkit-nestjs)
 bun test                               # Run all backend tests (bun test runner)
 bun test src/__tests__/domain/booking.service.test.ts   # Single test file
 bun run build                          # Build via tsup (CJS + ESM + .d.ts)
 bun run typecheck                      # tsc --noEmit
 
-# Frontend package (packages/frontend)
-bun run build                          # Build via Vite (CJS + ESM + .d.ts)
+# Frontend package (packages/frontend → @hfu.digital/roomkit-react)
+bun run build                          # Build via Vite + vite-plugin-dts (CJS + ESM + .d.ts)
 bun run typecheck                      # tsc --noEmit
+# (frontend has no test script; root `bun run test` only runs backend tests)
 
 # Example NestJS API (examples/nestjs-api)
 bun run start:dev                      # NestJS dev server with watch
@@ -62,13 +63,13 @@ Bun workspaces (`packages/*`, `examples/*`). Turborepo orchestrates build/test/t
 The core architectural pattern is **storage interface abstraction**. Domain services depend on abstract classes (not concrete implementations):
 
 ```
-domain/       → Business logic services (injected via NestJS DI)
-interfaces/   → 11 abstract storage classes (BookingStorage, RoomStorage, etc.)
-adapters/     → PrismaRoomKitAdapter (implements all 11 interfaces)
+domain/       → 14 business logic services (booking, conflict, availability, recurrence, exam, travel-time, bulk-operation, ...) + state-machine.ts
+interfaces/   → 11 abstract storage classes (BookingStorage, RoomStorage, ConflictStorage, etc.)
+adapters/prisma/ → 11 individual Prisma*Adapter classes + composite PrismaRoomKitAdapter
 dto/          → Validation functions (not class-validator decorators)
 errors/       → RoomKitError hierarchy with machine-readable codes + context
 events/       → Synchronous EventBus with typed discriminated union events
-types/        → Entity interfaces, enums, Prisma structural types
+types/        → Entity interfaces, enums, Prisma structural types (prisma-delegates.ts)
 ```
 
 **Key invariant**: No `@prisma/client` import anywhere in `packages/backend/src/`. The Prisma adapter uses structural typing (`prisma-delegates.ts`) so consumers can pass any PrismaClient that matches the expected shape.
