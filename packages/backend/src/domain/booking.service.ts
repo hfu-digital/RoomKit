@@ -15,6 +15,7 @@ import {
     BookingConflictError,
     InvalidStateTransitionError,
     RoomNotFoundError,
+    RoomKitError,
 } from '../errors/roomkit.error';
 
 @Injectable()
@@ -42,12 +43,14 @@ export class BookingService {
             });
         }
 
-        // Idempotency: return existing booking if the key already maps to one
+        // Keys can collide in shared storage. Never return another principal's
+        // booking or treat a changed creation request as an authorized replay.
         if (dto.idempotencyKey) {
             const existing = await this.bookingStorage.findByIdempotencyKey(
                 dto.idempotencyKey,
             );
             if (existing) {
+                this.assertIdempotentReplay(existing, dto);
                 return existing;
             }
         }
@@ -88,6 +91,10 @@ export class BookingService {
             },
         );
 
+        // Custom adapters may resolve concurrent key conflicts by returning an
+        // existing row. Apply the same boundary to that result as to a lookup.
+        if (dto.idempotencyKey) this.assertIdempotentReplay(booking, dto);
+
         this.eventBus.emit({
             type: 'BookingRequested',
             payload: booking,
@@ -98,6 +105,30 @@ export class BookingService {
         });
 
         return booking;
+    }
+
+    private assertIdempotentReplay(existing: Booking, dto: CreateBookingDto): void {
+        if (
+            existing.idempotencyKey !== dto.idempotencyKey ||
+            existing.requesterId !== dto.requesterId ||
+            existing.onBehalfOfId !== (dto.onBehalfOfId ?? null) ||
+            existing.roomId !== dto.roomId ||
+            existing.startsAt.getTime() !== dto.startsAt.getTime() ||
+            existing.endsAt.getTime() !== dto.endsAt.getTime() ||
+            existing.title !== dto.title ||
+            existing.description !== (dto.description ?? null) ||
+            existing.purposeType !== dto.purposeType ||
+            (dto.priority !== undefined && existing.priority !== dto.priority) ||
+            existing.recurrenceRuleId !== (dto.recurrenceRuleId ?? null) ||
+            existing.recurrenceModType !== (dto.recurrenceModType ?? null) ||
+            existing.metadata !== (dto.metadata ?? null)
+        ) {
+            // Do not include the original booking, owner or key in the error.
+            throw new RoomKitError(
+                'IDEMPOTENCY_CONFLICT',
+                'The idempotency key cannot be used for this booking request',
+            );
+        }
     }
 
     /**

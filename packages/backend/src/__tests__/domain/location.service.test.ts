@@ -379,3 +379,18 @@ describe("LocationService – getAncestors", () => {
         expect(ancestors).toEqual([]);
     });
 });
+
+test('builds a wide tree with one parent lookup per input node', async () => {
+    let parentReads = 0;
+    const nodes = Array.from({ length: 1000 }, (_, i) => {
+        const node = makeNode({ id: String(i) });
+        Object.defineProperty(node, 'parentId', { enumerable: true, get: () => { parentReads++; return i === 0 ? null : '0'; } });
+        return node;
+    });
+    locationStorage.queryByScope = async () => nodes;
+    const tree = await service.getTree();
+    expect(tree).toHaveLength(1);
+    expect(tree[0]!.children.map(node => node.id)).toEqual(nodes.slice(1).map(node => node.id));
+    // Indexing plus copying each returned node is linear, independent of width.
+    expect(parentReads).toBeLessThan(4 * nodes.length);
+});

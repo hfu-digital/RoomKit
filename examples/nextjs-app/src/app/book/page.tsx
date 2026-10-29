@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCreateBooking } from "@hfu.digital/roomkit-react";
 import type { Booking } from "@hfu.digital/roomkit-react";
 
 export default function BookPage() {
+    return <Suspense fallback={<p>Loading booking form…</p>}><BookingFormPage /></Suspense>;
+}
+
+function BookingFormPage() {
     const searchParams = useSearchParams();
     const prefilledRoomId = searchParams.get("roomId") ?? "";
 

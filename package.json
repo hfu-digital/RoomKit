@@ -1,20 +1,37 @@
 {
-    "name": "roomkit-monorepo",
-    "private": true,
-    "workspaces": [
-        "packages/*",
-        "examples/*"
-    ],
-    "scripts": {
-        "build": "turbo run build",
-        "typecheck": "turbo run typecheck",
-        "test": "turbo run test",
-        "clean": "turbo run clean",
-        "dev": "turbo run dev"
-    },
-    "packageManager": "bun@1.2.23",
-    "devDependencies": {
-        "turbo": "^2.4.0",
-        "typescript": "^5.7.0"
-    }
+  "name": "roomkit-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev"
+  },
+  "packageManager": "bun@1.4.2",
+  "devDependencies": {
+    "turbo": "^2.11.10",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "fastify@^5": "5.12.7",
+    "path-to-regexp@^8": "8.4.2",
+    "js-yaml@^5": "5.5.0",
+    "lodash@^4": "4.18.1",
+    "minimatch@^3": "3.1.4",
+    "minimatch@^5": "5.1.8",
+    "ajv@^6": "6.14.0",
+    "ajv@^8": "8.18.0",
+    "postcss@^8": "8.5.32",
+    "nanoid@^3": "3.3.18",
+    "yaml@^2": "2.9.1",
+    "effect@^3": "3.21.0",
+    "find-my-way@^9": "9.7.0",
+    "deepmerge-ts@7.1.5": "8.0.0",
+    "esbuild@^0.27.0": "0.28.1"
+  }
 }

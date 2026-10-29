@@ -17,45 +17,32 @@ export class PrismaBlackoutAdapter extends BlackoutStorage {
         locationNodeId: string,
         timeRange: { startsAt: Date; endsAt: Date },
     ): Promise<BlackoutWindow[]> {
-        // Get the location node to find its path
-        const node = await this.prisma.locationNode.findUnique({
-            where: { id: locationNodeId },
-        });
+        return (await this.findActiveForScopes([locationNodeId], timeRange))[locationNodeId] ?? [];
+    }
 
-        if (!node) {
-            return [];
+    async findActiveForScopes(ids: string[], timeRange: { startsAt: Date; endsAt: Date }): Promise<Record<string, BlackoutWindow[]>> {
+        if (!ids.length) return {};
+        const where: Record<string, unknown> = { id: { in: ids } };
+        const nodes = await this.prisma.locationNode.findMany({ where });
+        const paths = new Set<string>();
+        for (const node of nodes) {
+            const segments = node.path.split('/');
+            for (let i = 1; i <= segments.length; i++) paths.add(segments.slice(0, i).join('/'));
         }
-
-        // Build ancestor paths from the node's path
-        const segments = node.path.split("/");
-        const ancestorPaths: string[] = [];
-        for (let i = 1; i <= segments.length; i++) {
-            ancestorPaths.push(segments.slice(0, i).join("/"));
+        const ancestorWhere: Record<string, unknown> = { path: { in: [...paths] } };
+        const ancestors = await this.prisma.locationNode.findMany({ where: ancestorWhere });
+        const blackouts = await this.prisma.blackoutWindow.findMany({ where: {
+            locationNodeId: { in: [...new Set([...nodes, ...ancestors].map(n => n.id))] },
+            AND: [{ startsAt: { lt: timeRange.endsAt } }, { endsAt: { gt: timeRange.startsAt } }],
+        } });
+        const result: Record<string, BlackoutWindow[]> = {};
+        for (const id of ids) {
+            const node = nodes.find(n => n.id === id);
+            const applicable = new Set(node ? ancestors.filter(a => node.path === a.path || node.path.startsWith(a.path + '/')).map(a => a.id) : []);
+            if (node) applicable.add(node.id);
+            result[id] = blackouts.filter(b => applicable.has(b.locationNodeId));
         }
-
-        // Get location node IDs for all ancestors (including the node itself)
-        const locationNodeIds: string[] = [locationNodeId];
-        for (const ancestorPath of ancestorPaths) {
-            const ancestor = await this.prisma.locationNode.findUnique({
-                where: { path: ancestorPath },
-            });
-            if (ancestor && ancestor.id !== locationNodeId) {
-                locationNodeIds.push(ancestor.id);
-            }
-        }
-
-        // Query blackouts that apply to any of these location nodes within the time range
-        // A blackout is active if it overlaps with the given time range:
-        // blackout.startsAt < timeRange.endsAt AND blackout.endsAt > timeRange.startsAt
-        return this.prisma.blackoutWindow.findMany({
-            where: {
-                locationNodeId: { in: locationNodeIds },
-                AND: [
-                    { startsAt: { lte: timeRange.endsAt } },
-                    { endsAt: { gte: timeRange.startsAt } },
-                ],
-            },
-        });
+        return result;
     }
 
     async findById(id: string): Promise<BlackoutWindow | null> {

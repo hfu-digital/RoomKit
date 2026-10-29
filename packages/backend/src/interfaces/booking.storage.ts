@@ -7,6 +7,9 @@ import type {
 import type { BookingStatus } from "../types/enums";
 
 export abstract class BookingStorage {
+    /** Same status and overlap semantics as findOverlapping, across rooms. */
+    findOverlappingBatch?(roomIds: string[], startsAt: Date, endsAt: Date): Promise<Booking[]>;
+
     abstract createWithConflictCheck(
         booking: Omit<Booking, "id" | "version" | "createdAt" | "updatedAt">,
         conflictScope: {

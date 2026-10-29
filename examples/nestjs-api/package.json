@@ -1,24 +1,25 @@
 {
-    "name": "roomkit-example-nestjs",
-    "private": true,
-    "version": "0.0.1",
-    "scripts": {
-        "start:dev": "nest start --watch",
-        "build": "nest build",
-        "start": "node dist/main"
-    },
-    "dependencies": {
-        "@nestjs/common": "^11.0.0",
-        "@nestjs/core": "^11.0.0",
-        "@nestjs/platform-fastify": "^11.0.0",
-        "@nestjs/swagger": "^11.0.0",
-        "@hfu.digital/roomkit-nestjs": "workspace:*",
-        "@prisma/client": "^6.0.0",
-        "reflect-metadata": "^0.2.0"
-    },
-    "devDependencies": {
-        "@nestjs/cli": "^11.0.0",
-        "prisma": "^6.0.0",
-        "typescript": "^5.7.0"
-    }
+  "name": "roomkit-example-nestjs",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start:dev": "bun run db:generate && tsc-watch -p tsconfig.json --onSuccess \"node dist/main.js\"",
+    "build": "bun run db:generate && tsc -p tsconfig.json",
+    "start": "node dist/main",
+    "db:generate": "prisma generate --schema prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.8",
+    "@nestjs/core": "^11.2.8",
+    "@nestjs/platform-fastify": "^11.2.8",
+    "@nestjs/swagger": "^11.0.0",
+    "@hfu.digital/roomkit-nestjs": "workspace:*",
+    "@prisma/client": "^6.0.0",
+    "reflect-metadata": "^0.2.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0",
+    "typescript": "^5.7.0",
+    "tsc-watch": "7.2.1"
+  }
 }

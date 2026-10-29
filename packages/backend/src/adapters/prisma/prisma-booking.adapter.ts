@@ -149,6 +149,15 @@ export class PrismaBookingAdapter extends BookingStorage {
         );
     }
 
+    async findOverlappingBatch(roomIds: string[], startsAt: Date, endsAt: Date): Promise<Booking[]> {
+        if (!roomIds.length) return [];
+        const where: Record<string, unknown> = {
+            roomId: { in: roomIds }, startsAt: { lt: endsAt }, endsAt: { gt: startsAt },
+            NOT: { OR: [{ status: 'cancelled' }, { status: 'completed' }] },
+        };
+        return this.prisma.booking.findMany({ where });
+    }
+
     async findOverlapping(
         roomId: string,
         startsAt: Date,
@@ -299,8 +308,8 @@ export class PrismaBookingAdapter extends BookingStorage {
 
         let nextCursor: string | undefined;
         if (items.length > limit) {
-            const lastItem = items.pop()!;
-            nextCursor = lastItem.id;
+            items.pop();
+            nextCursor = items[items.length - 1]?.id;
         }
 
         return { items, nextCursor };
@@ -334,8 +343,8 @@ export class PrismaBookingAdapter extends BookingStorage {
 
         let nextCursor: string | undefined;
         if (items.length > limit) {
-            const lastItem = items.pop()!;
-            nextCursor = lastItem.id;
+            items.pop();
+            nextCursor = items[items.length - 1]?.id;
         }
 
         return { items, nextCursor };

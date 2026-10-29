@@ -103,8 +103,8 @@ export interface RecurrenceRuleWhere {
 export interface BlackoutWindowWhere {
     id?: string;
     locationNodeId?: string | { in?: string[] };
-    startsAt?: Date | { lte?: Date };
-    endsAt?: Date | { gte?: Date };
+    startsAt?: Date | { lte?: Date; lt?: Date };
+    endsAt?: Date | { gte?: Date; gt?: Date };
     scope?: string;
     AND?: BlackoutWindowWhere[];
     OR?: BlackoutWindowWhere[];

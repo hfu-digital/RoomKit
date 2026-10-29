@@ -95,6 +95,61 @@ beforeEach(async () => {
 // ─── create ────────────────────────────────────────────────────────
 
 describe("BookingService – create", () => {
+    test("rejects key reuse across requesters or changed booking scopes without leaking the original", async () => {
+        const dto = {
+            roomId: testRoom.id, requesterId: 'owner', title: 'Private meeting',
+            startsAt: hours(0), endsAt: hours(1), purposeType: 'LECTURE',
+            idempotencyKey: 'shared-key', onBehalfOfId: 'beneficiary',
+        };
+        const original = await service.create(dto);
+        for (const change of [
+            { requesterId: 'attacker' }, { onBehalfOfId: 'attacker' },
+            { roomId: 'different-room' }, { startsAt: hours(-1) }, { endsAt: hours(2) },
+            { title: 'Different request' }, { description: 'Changed' },
+            { purposeType: 'OTHER' }, { priority: original.priority === 100 ? 99 : 100 },
+            { recurrenceRuleId: 'different-recurrence' }, { metadata: 'different-tenant' },
+        ]) {
+            try {
+                await service.create({ ...dto, ...change });
+                throw new Error('Expected idempotency conflict');
+            } catch (error: any) {
+                expect(error.code).toBe('IDEMPOTENCY_CONFLICT');
+                expect(error.context).toEqual({});
+                expect(error.message).not.toContain(original.id);
+                expect(error.message).not.toContain('owner');
+            }
+        }
+    });
+
+    test("checks a conflicting result returned by a custom storage adapter", async () => {
+        const dto = {
+            roomId: testRoom.id, requesterId: 'owner', title: 'Private meeting',
+            startsAt: hours(0), endsAt: hours(1), purposeType: 'LECTURE', idempotencyKey: 'shared-key',
+        };
+        const original = await service.create(dto);
+        bookingStorage.findByIdempotencyKey = async () => null;
+        bookingStorage.createWithConflictCheck = async () => original;
+        let emitted = false;
+        eventBus.on('BookingRequested', () => { emitted = true; });
+        await expect(service.create({ ...dto, requesterId: 'attacker' })).rejects.toMatchObject({ code: 'IDEMPOTENCY_CONFLICT' });
+        expect(emitted).toBe(false);
+    });
+
+    test("same request replay returns current state without repeating creation events", async () => {
+        const dto = {
+            roomId: testRoom.id, requesterId: 'owner', title: 'Meeting',
+            startsAt: hours(0), endsAt: hours(1), purposeType: 'LECTURE', idempotencyKey: 'shared-key',
+        };
+        let emissions = 0;
+        eventBus.on('BookingRequested', () => { emissions++; });
+        const original = await service.create(dto);
+        await service.confirm(original.id, 'admin');
+        const replay = await service.create({ ...dto, startsAt: new Date(dto.startsAt), endsAt: new Date(dto.endsAt) });
+        expect(replay.id).toBe(original.id);
+        expect(replay.status).toBe(BookingStatus.CONFIRMED);
+        expect(emissions).toBe(1);
+    });
+
     test("succeeds with valid data", async () => {
         const booking = await service.create({
             roomId: testRoom.id,

@@ -48,73 +48,24 @@ export class PrismaRoomAdapter extends RoomStorage {
             where[capacityField] = { gte: filter.minCapacity };
         }
 
-        // Fetch rooms matching base criteria
-        let rooms: Room[] = await this.prisma.room.findMany({ where });
-
-        // Filter by equipment: room must have ALL required equipment tags
-        if (filter.equipment && filter.equipment.length > 0) {
-            const filteredRooms: Room[] = [];
-            for (const room of rooms) {
-                const equipmentList = await this.prisma.roomEquipment.findMany({
-                    where: { roomId: room.id },
-                });
-                const tags = new Set(
-                    equipmentList.map((e: RoomEquipment) => e.tag),
-                );
-                const hasAll = filter.equipment.every((tag) => tags.has(tag));
-                if (hasAll) {
-                    filteredRooms.push(room);
-                }
-            }
-            rooms = filteredRooms;
+        if (filter.equipment?.length) {
+            where.AND = filter.equipment.map(tag => ({ equipment: { some: { tag } } }));
         }
-
-        // Filter by accessibility: room must have ALL required attributes
-        if (filter.accessibility && filter.accessibility.length > 0) {
-            const filteredRooms: Room[] = [];
-            for (const room of rooms) {
-                const accessibilityList =
-                    await this.prisma.roomAccessibility.findMany({
-                        where: { roomId: room.id },
-                    });
-                const attributes = new Set(
-                    accessibilityList.map(
-                        (a: RoomAccessibility) => a.attribute,
-                    ),
-                );
-                const hasAll = filter.accessibility.every((attr) =>
-                    attributes.has(attr),
-                );
-                if (hasAll) {
-                    filteredRooms.push(room);
-                }
-            }
-            rooms = filteredRooms;
+        if (filter.accessibility?.length) {
+            const clauses = (where.AND ?? []) as Record<string, unknown>[];
+            where.AND = [...clauses, ...filter.accessibility.map(attribute => ({ accessibility: { some: { attribute } } }))];
         }
-
-        // Filter by locationScope: the room's location node path must start with the scope
         if (filter.locationScope !== undefined) {
-            const scopePrefix = filter.locationScope.endsWith("/")
-                ? filter.locationScope
-                : filter.locationScope + "/";
-            const filteredRooms: Room[] = [];
-            for (const room of rooms) {
-                const locationNode =
-                    await this.prisma.locationNode.findUnique({
-                        where: { id: room.locationNodeId },
-                    });
-                if (
-                    locationNode &&
-                    (locationNode.path === filter.locationScope ||
-                        locationNode.path.startsWith(scopePrefix))
-                ) {
-                    filteredRooms.push(room);
-                }
-            }
-            rooms = filteredRooms;
+            const prefix = filter.locationScope.endsWith('/') ? filter.locationScope : filter.locationScope + '/';
+            where.locationNode = { OR: [{ path: filter.locationScope }, { path: { startsWith: prefix } }] };
         }
+        return this.prisma.room.findMany({ where });
+    }
 
-        return rooms;
+    async getWithEquipmentBatch(ids: string[]): Promise<(Room & { equipment: RoomEquipment[]; accessibility: RoomAccessibility[] })[]> {
+        if (!ids.length) return [];
+        const where: Record<string, unknown> = { id: { in: ids } };
+        return this.prisma.room.findMany({ where, include: { equipment: true, accessibility: true } });
     }
 
     async getPartitionTree(roomId: string): Promise<RoomPartition[]> {

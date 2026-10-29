@@ -7,6 +7,8 @@ import type {
 } from "../types/entities";
 
 export abstract class RoomStorage {
+    getWithEquipmentBatch?(ids: string[]): Promise<(Room & { equipment: RoomEquipment[]; accessibility: RoomAccessibility[] })[]>;
+
     abstract create(
         data: Omit<Room, "id" | "createdAt" | "updatedAt">,
     ): Promise<Room>;

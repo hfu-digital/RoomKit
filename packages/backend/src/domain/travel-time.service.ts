@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { RoomStorage } from '../interfaces/room.storage';
+import { Injectable, Inject, Optional } from '@nestjs/common';
 import { BookingStorage } from '../interfaces/booking.storage';
 import { LocationStorage } from '../interfaces/location.storage';
 import type {
@@ -14,6 +15,7 @@ export class TravelTimeService {
         private readonly travelTimeMatrix: Record<string, number>,
         private readonly bookingStorage: BookingStorage,
         private readonly locationStorage: LocationStorage,
+        @Optional() private readonly roomStorage?: RoomStorage,
     ) {}
 
     /**
@@ -40,12 +42,16 @@ export class TravelTimeService {
         dayEnd.setHours(23, 59, 59, 999);
 
         // Get all confirmed bookings for the person on the same day
-        const result = await this.bookingStorage.findByPerson(
-            personId,
-            { startsAt: dayStart, endsAt: dayEnd },
-        );
-
-        const existingBookings = result.items;
+        const existingBookings: import('../types/entities').Booking[] = [];
+        const seen = new Set<string>();
+        let cursor: string | undefined;
+        do {
+            const page = await this.bookingStorage.findByPerson(personId, { startsAt: dayStart, endsAt: dayEnd }, { limit: 200, cursor });
+            existingBookings.push(...page.items.filter(b => b.status !== 'cancelled' && b.status !== 'completed'));
+            cursor = page.nextCursor;
+            if (cursor && seen.has(cursor)) throw new Error('Booking storage returned a repeated pagination cursor');
+            if (cursor) seen.add(cursor);
+        } while (cursor);
 
         // Build combined schedule: existing bookings + proposed, sorted by start time
         const schedule = [
@@ -63,6 +69,14 @@ export class TravelTimeService {
             },
         ].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
 
+        const campuses = new Map<string, Awaited<ReturnType<TravelTimeService['resolveCampus']>>>();
+        const locations = new Map<string, Awaited<ReturnType<TravelTimeService['resolveCampus']>>>();
+        for (const roomId of new Set(schedule.map(b => b.roomId))) {
+            const locationId = this.roomStorage ? (await this.roomStorage.findById(roomId))?.locationNodeId : roomId;
+            if (!locationId) { campuses.set(roomId, null); continue; }
+            if (!locations.has(locationId)) locations.set(locationId, await this.resolveCampus(locationId));
+            campuses.set(roomId, locations.get(locationId)!);
+        }
         const violations: TravelTimeViolation[] = [];
 
         // Check each adjacent pair
@@ -71,8 +85,8 @@ export class TravelTimeService {
             const next = schedule[i + 1]!;
 
             // Resolve both rooms to their campus
-            const currentCampus = await this.resolveCampus(current.roomId);
-            const nextCampus = await this.resolveCampus(next.roomId);
+            const currentCampus = campuses.get(current.roomId);
+            const nextCampus = campuses.get(next.roomId);
 
             // If same campus or either campus is unresolvable, no travel time needed
             if (!currentCampus || !nextCampus) {
@@ -132,7 +146,7 @@ export class TravelTimeService {
         toLocationId: string,
     ): Promise<number | null> {
         const fromCampus = await this.resolveCampus(fromLocationId);
-        const toCampus = await this.resolveCampus(toLocationId);
+        const toCampus = fromLocationId === toLocationId ? fromCampus : await this.resolveCampus(toLocationId);
 
         if (!fromCampus || !toCampus) {
             return null;
@@ -163,7 +177,7 @@ export class TravelTimeService {
         const ancestors = await this.locationStorage.getAncestors(
             locationIdOrRoomId,
         );
-        for (const ancestor of ancestors) {
+        for (const ancestor of [...ancestors].sort((a, b) => b.path.length - a.path.length)) {
             if (ancestor.type === LocationNodeType.CAMPUS) {
                 return { id: ancestor.id, displayName: ancestor.displayName };
             }

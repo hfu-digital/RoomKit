@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .turbo/
+.next/
 *.tsbuildinfo
 
 # Lockfile
@@ -24,3 +25,9 @@ Thumbs.db
 
 # Test coverage
 coverage/
+
+# Frozen Bun graph is the reproducible install authority.
+!bun.lock
+
+# Next.js generated example output
+.next/

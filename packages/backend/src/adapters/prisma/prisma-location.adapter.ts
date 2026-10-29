@@ -54,18 +54,10 @@ export class PrismaLocationAdapter extends LocationStorage {
             return [];
         }
 
-        // Query all ancestors by their paths
-        const ancestors: LocationNode[] = [];
-        for (const ancestorPath of ancestorPaths) {
-            const ancestor = await this.prisma.locationNode.findUnique({
-                where: { path: ancestorPath },
-            });
-            if (ancestor) {
-                ancestors.push(ancestor);
-            }
-        }
-
-        return ancestors;
+        const where: Record<string, unknown> = { path: { in: ancestorPaths } };
+        const rows: LocationNode[] = await this.prisma.locationNode.findMany({ where });
+        const byPath = new Map(rows.map(row => [row.path, row]));
+        return ancestorPaths.flatMap(path => { const row = byPath.get(path); return row ? [row] : []; });
     }
 
     async queryByScope(scope: {
@@ -83,20 +75,11 @@ export class PrismaLocationAdapter extends LocationStorage {
             where.isActive = scope.isActive;
         }
 
-        // Fetch all matching nodes and then filter by parentPath prefix if needed
-        const nodes = await this.prisma.locationNode.findMany({ where });
-
         if (scope.parentPath !== undefined) {
-            const prefix = scope.parentPath.endsWith("/")
-                ? scope.parentPath
-                : scope.parentPath + "/";
-            return nodes.filter(
-                (n: LocationNode) =>
-                    n.path.startsWith(prefix) || n.path === scope.parentPath,
-            );
+            const prefix = scope.parentPath.endsWith('/') ? scope.parentPath : scope.parentPath + '/';
+            where.OR = [{ path: scope.parentPath }, { path: { startsWith: prefix } }];
         }
-
-        return nodes;
+        return this.prisma.locationNode.findMany({ where });
     }
 
     async resolveAlias(alias: string): Promise<LocationNode | null> {
