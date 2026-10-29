@@ -1,67 +1,67 @@
 {
-    "name": "@hfu.digital/roomkit-react",
-    "version": "2026.04.1",
-    "description": "RoomKit React components and hooks for room booking UIs",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.mts",
-                "default": "./dist/index.mjs"
-            },
-            "require": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.js"
-            }
-        }
-    },
-    "sideEffects": false,
-    "files": [
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/hfu-digital/RoomKit.git",
-        "directory": "packages/frontend"
-    },
-    "homepage": "https://github.com/hfu-digital/RoomKit#readme",
-    "bugs": {
-        "url": "https://github.com/hfu-digital/RoomKit/issues"
-    },
-    "keywords": [
-        "roomkit",
-        "room-booking",
-        "react",
-        "hooks",
-        "components",
-        "scheduling",
-        "university"
-    ],
-    "scripts": {
-        "build": "vite build",
-        "typecheck": "tsc --noEmit",
-        "clean": "rm -rf dist",
-        "prepublishOnly": "bun run build"
-    },
-    "peerDependencies": {
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0"
-    },
-    "devDependencies": {
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "@vitejs/plugin-react": "^4.0.0",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
-        "typescript": "^5.7.0",
-        "vite": "^6.0.0",
-        "vite-plugin-dts": "^4.0.0"
-    },
-    "license": "MIT",
-    "publishConfig": {
-        "access": "public",
-        "registry": "https://registry.npmjs.org/"
+  "name": "@hfu.digital/roomkit-react",
+  "version": "2026.04.1",
+  "description": "RoomKit React components and hooks for room booking UIs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hfu-digital/RoomKit.git",
+    "directory": "packages/frontend"
+  },
+  "homepage": "https://github.com/hfu-digital/RoomKit#readme",
+  "bugs": {
+    "url": "https://github.com/hfu-digital/RoomKit/issues"
+  },
+  "keywords": [
+    "roomkit",
+    "room-booking",
+    "react",
+    "hooks",
+    "components",
+    "scheduling",
+    "university"
+  ],
+  "scripts": {
+    "build": "vite build && node -e \"require('node:fs').copyFileSync('dist/index.d.ts', 'dist/index.d.mts')\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "bun run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.4.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

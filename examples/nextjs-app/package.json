@@ -1,21 +1,22 @@
 {
-    "name": "roomkit-example-nextjs",
-    "private": true,
-    "version": "0.0.1",
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start"
-    },
-    "dependencies": {
-        "@hfu.digital/roomkit-react": "workspace:*",
-        "next": "^15.0.0",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0"
-    },
-    "devDependencies": {
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "typescript": "^5.7.0"
-    }
+  "name": "roomkit-example-nextjs",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@hfu.digital/roomkit-react": "workspace:*",
+    "next": "16.4.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.19.7"
+  }
 }

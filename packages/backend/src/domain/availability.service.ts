@@ -1,3 +1,4 @@
+import { readBatch, byKey } from './batch';
 import { Injectable } from '@nestjs/common';
 import { RoomStorage } from '../interfaces/room.storage';
 import { BookingStorage } from '../interfaces/booking.storage';
@@ -45,38 +46,19 @@ export class AvailabilityService {
             isActive: true,
         });
 
+        const candidates = candidateRooms.filter(r => !filters.excludeRoomIds?.includes(r.id));
+        const bookings = byKey(await readBatch(candidates.map(r => r.id),
+            this.bookingStorage.findOverlappingBatch ? ids => this.bookingStorage.findOverlappingBatch!(ids, filters.timeRange.startsAt, filters.timeRange.endsAt) : undefined,
+            id => this.bookingStorage.findOverlapping(id, filters.timeRange.startsAt, filters.timeRange.endsAt)), b => b.roomId);
+        const blackoutMap = await this.loadBlackouts(candidates.map(r => r.locationNodeId), filters.timeRange);
+        const survivors = candidates.filter(r => !bookings.get(r.id)?.length && !blackoutMap[r.locationNodeId]?.length);
+        const details = new Map((await readBatch(survivors.map(r => r.id), this.roomStorage.getWithEquipmentBatch?.bind(this.roomStorage), async id => {
+            const room = await this.roomStorage.getWithEquipment(id); return room ? [room] : [];
+        })).map(r => [r.id, r]));
         const availableItems: AvailabilityResultItem[] = [];
 
-        for (const room of candidateRooms) {
-            // Skip explicitly excluded rooms
-            if (filters.excludeRoomIds?.includes(room.id)) {
-                continue;
-            }
-
-            // Check for overlapping bookings
-            const overlappingBookings = await this.bookingStorage.findOverlapping(
-                room.id,
-                filters.timeRange.startsAt,
-                filters.timeRange.endsAt,
-            );
-            if (overlappingBookings.length > 0) {
-                continue;
-            }
-
-            // Check for active blackout windows
-            const blackouts = await this.blackoutStorage.findActiveForScope(
-                room.locationNodeId,
-                {
-                    startsAt: filters.timeRange.startsAt,
-                    endsAt: filters.timeRange.endsAt,
-                },
-            );
-            if (blackouts.length > 0) {
-                continue;
-            }
-
-            // Load full room details with equipment and accessibility
-            const roomWithDetails = await this.roomStorage.getWithEquipment(room.id);
+        for (const room of survivors) {
+            const roomWithDetails = details.get(room.id);
             if (!roomWithDetails) {
                 continue;
             }
@@ -143,6 +125,7 @@ export class AvailabilityService {
         duration: number,
         limit: number,
     ): Promise<TimeSlot[]> {
+        if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(limit) || limit <= 0 || !Number.isFinite(after.getTime())) return [];
         const slots: TimeSlot[] = [];
         const INCREMENT_MS = 30 * 60 * 1000;
         const MAX_SCAN_MS = 14 * 24 * 60 * 60 * 1000;
@@ -159,6 +142,9 @@ export class AvailabilityService {
             room.locationNodeId,
         );
 
+        const range = { startsAt: after, endsAt: new Date(scanEnd.getTime() + durationMs) };
+        const bookings = await this.bookingStorage.findOverlapping(roomId, range.startsAt, range.endsAt);
+        const blackouts = await this.blackoutStorage.findActiveForScope(room.locationNodeId, range);
         let candidateStart = new Date(after.getTime());
 
         while (
@@ -167,13 +153,9 @@ export class AvailabilityService {
         ) {
             const candidateEnd = new Date(candidateStart.getTime() + durationMs);
 
-            const isValid = await this.isSlotAvailable(
-                roomId,
-                room.locationNodeId,
-                candidateStart,
-                candidateEnd,
-                operatingHours,
-            );
+            const isValid = (!operatingHours.length || this.isWithinOperatingHours(candidateStart, candidateEnd, operatingHours))
+                && !bookings.some(b => b.startsAt < candidateEnd && b.endsAt > candidateStart)
+                && !blackouts.some(b => b.startsAt < candidateEnd && b.endsAt > candidateStart);
 
             if (isValid) {
                 slots.push({
@@ -252,40 +234,15 @@ export class AvailabilityService {
      * Check whether a candidate slot is fully available:
      * no overlapping bookings, no blackouts, and within operating hours.
      */
-    private async isSlotAvailable(
-        roomId: string,
-        locationNodeId: string,
-        startsAt: Date,
-        endsAt: Date,
-        operatingHours: OperatingHours[],
-    ): Promise<boolean> {
-        // Check operating hours (if defined)
-        if (operatingHours.length > 0) {
-            if (!this.isWithinOperatingHours(startsAt, endsAt, operatingHours)) {
-                return false;
-            }
+    private async loadBlackouts(ids: string[], range: { startsAt: Date; endsAt: Date }) {
+        const unique = [...new Set(ids)];
+        const result: Record<string, import('../types/entities').BlackoutWindow[]> = {};
+        for (let i = 0; i < unique.length; i += 200) {
+            const chunk = unique.slice(i, i + 200);
+            if (this.blackoutStorage.findActiveForScopes) Object.assign(result, await this.blackoutStorage.findActiveForScopes(chunk, range));
+            else for (const id of chunk) result[id] = await this.blackoutStorage.findActiveForScope(id, range);
         }
-
-        // Check overlapping bookings
-        const overlapping = await this.bookingStorage.findOverlapping(
-            roomId,
-            startsAt,
-            endsAt,
-        );
-        if (overlapping.length > 0) {
-            return false;
-        }
-
-        // Check blackouts
-        const blackouts = await this.blackoutStorage.findActiveForScope(
-            locationNodeId,
-            { startsAt, endsAt },
-        );
-        if (blackouts.length > 0) {
-            return false;
-        }
-
-        return true;
+        return result;
     }
 
     /**

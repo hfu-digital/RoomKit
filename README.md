@@ -257,6 +257,19 @@ RoomKit is a **domain logic library** — it does **not** handle authentication 
 - Scope queries appropriately (e.g., only return a user's own bookings)
 - Add NestJS guards or middleware as needed
 
+Derive `requesterId` and transition `triggeredBy` from the authenticated actor;
+authorize `onBehalfOfId`, room access and any priority override separately. Use
+tenant-scoped adapters or globally unique identities when sharing a database:
+RoomKit has no tenant or calendar identity field of its own.
+
+Idempotency keys are bound to the requester, beneficiary, room, time window and
+creation details. A reused key with different details throws
+`IDEMPOTENCY_CONFLICT` without returning the original booking. Exact retries may
+return its current state. If a booking is edited after creation, retrying the
+original creation payload can conflict; retrieve it through an authorized read
+instead. Storage adapters must enforce unique keys atomically and must never
+resolve a race by returning another principal's booking.
+
 ### Timezone Handling
 
 All `Date` objects in RoomKit use the server's local timezone. For consistent behavior across deployments:

@@ -90,7 +90,13 @@ export class LocationService {
             nodes = await this.locationStorage.queryByScope({});
         }
 
-        return this.buildTree(nodes, rootId ?? null);
+        const childrenByParent = new Map<string | null, LocationNode[]>();
+        for (const node of nodes) {
+            let children = childrenByParent.get(node.parentId);
+            if (!children) childrenByParent.set(node.parentId, children = []);
+            children.push(node);
+        }
+        return this.buildTree(childrenByParent, rootId ?? null);
     }
 
     /**
@@ -180,18 +186,18 @@ export class LocationService {
      * Recursively builds a tree from a flat list of nodes.
      */
     private buildTree(
-        nodes: LocationNode[],
+        childrenByParent: Map<string | null, LocationNode[]>,
         parentId: string | null,
         depth: number = 0,
     ): LocationTreeNode[] {
         if (depth >= LocationService.MAX_TREE_DEPTH) {
             return [];
         }
-        const children = nodes.filter((n) => n.parentId === parentId);
+        const children = childrenByParent.get(parentId) ?? [];
 
         return children.map((child) => ({
             ...child,
-            children: this.buildTree(nodes, child.id, depth + 1),
+            children: this.buildTree(childrenByParent, child.id, depth + 1),
         }));
     }
 }

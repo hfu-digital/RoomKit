@@ -1,3 +1,4 @@
+import { PollLoop } from '../lib/poll-loop';
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useApiClient } from "../lib/api-client";
 import type { BulkOperation, BulkOperationStatus } from "../types";
@@ -21,60 +22,43 @@ export function useBulkOperationStatus(options: UseBulkOperationStatusOptions) {
     const [data, setData] = useState<BulkOperation | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
-    const abortRef = useRef<AbortController | null>(null);
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    const fetch = useCallback(async () => {
-        abortRef.current?.abort();
-        const controller = new AbortController();
-        abortRef.current = controller;
-
+    const callbacks = useRef(options);
+    callbacks.current = options;
+    const loopRef = useRef<PollLoop | null>(null);
+    const fetch = useCallback(async (signal: AbortSignal) => {
         setIsLoading(true);
         setError(null);
-
+        let terminal = false;
         try {
-            const result = await api.get<BulkOperation>(`/bulk-operations/${options.operationId}`);
-            if (!controller.signal.aborted) {
-                setData(result);
-                options.onSuccess?.(result);
-
-                if (TERMINAL_STATUSES.includes(result.status)) {
-                    if (intervalRef.current) {
-                        clearInterval(intervalRef.current);
-                        intervalRef.current = null;
-                    }
-                    options.onComplete?.(result);
-                }
-            }
+            const result = await api.get<BulkOperation>(`/bulk-operations/${options.operationId}`, undefined, signal);
+            if (signal.aborted) return true;
+            setData(result);
+            terminal = TERMINAL_STATUSES.includes(result.status);
+            callbacks.current.onSuccess?.(result);
+            if (terminal) callbacks.current.onComplete?.(result);
         } catch (err) {
-            if (!controller.signal.aborted) {
+            if (!signal.aborted) {
                 const e = err instanceof Error ? err : new Error(String(err));
                 setError(e);
-                options.onError?.(e);
+                callbacks.current.onError?.(e);
             }
         } finally {
-            if (!controller.signal.aborted) {
+            if (!signal.aborted) {
                 setIsLoading(false);
             }
         }
+        return terminal;
     }, [api, options.operationId]);
 
     useEffect(() => {
-        if (options.enabled === false) return;
-
-        fetch();
-
-        const pollInterval = options.pollIntervalMs ?? 2000;
-        intervalRef.current = setInterval(fetch, pollInterval);
-
-        return () => {
-            abortRef.current?.abort();
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
-        };
+        const loop = new PollLoop(fetch, options.pollIntervalMs ?? 2000);
+        loopRef.current = loop;
+        setData(null);
+        setIsLoading(false);
+        if (options.enabled !== false) void loop.start();
+        return () => { loop.stop(); loopRef.current = null; };
     }, [fetch, options.enabled, options.pollIntervalMs]);
 
-    return { data, isLoading, error, refetch: fetch };
+    const refetch = useCallback(async () => { await loopRef.current?.refresh(); }, []);
+    return { data, isLoading, error, refetch };
 }

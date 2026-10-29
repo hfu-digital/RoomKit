@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useRoomKitConfig } from "../context/RoomKitProvider";
 
 export class ApiClient {
@@ -6,7 +7,7 @@ export class ApiClient {
         private fetchOptions?: RequestInit,
     ) {}
 
-    private async request<T>(method: string, path: string, body?: unknown, params?: Record<string, string>): Promise<T> {
+    private async request<T>(method: string, path: string, body?: unknown, params?: Record<string, string>, signal?: AbortSignal): Promise<T> {
         const url = new URL(path, this.baseUrl);
         if (params) {
             Object.entries(params).forEach(([key, value]) => {
@@ -24,6 +25,7 @@ export class ApiClient {
             },
             body: body ? JSON.stringify(body) : undefined,
             ...this.fetchOptions,
+            ...(signal ? { signal } : {}),
         });
 
         if (!response.ok) {
@@ -34,8 +36,8 @@ export class ApiClient {
         return response.json() as Promise<T>;
     }
 
-    get<T>(path: string, params?: Record<string, string>): Promise<T> {
-        return this.request<T>("GET", path, undefined, params);
+    get<T>(path: string, params?: Record<string, string>, signal?: AbortSignal): Promise<T> {
+        return this.request<T>("GET", path, undefined, params, signal);
     }
 
     post<T>(path: string, body?: unknown): Promise<T> {
@@ -53,5 +55,8 @@ export class ApiClient {
 
 export function useApiClient(): ApiClient {
     const config = useRoomKitConfig();
-    return new ApiClient(config.apiUrl, config.fetchOptions);
+    return useMemo(
+        () => new ApiClient(config.apiUrl, config.fetchOptions),
+        [config.apiUrl, config.fetchOptions],
+    );
 }

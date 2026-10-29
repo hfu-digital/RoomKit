@@ -21,6 +21,6 @@ export interface RoomKitProviderProps {
 }
 
 export function RoomKitProvider({ config, children }: RoomKitProviderProps) {
-    const value = useMemo(() => config, [config.apiUrl]);
+    const value = useMemo(() => config, [config.apiUrl, config.fetchOptions]);
     return <RoomKitContext.Provider value={value}>{children}</RoomKitContext.Provider>;
 }

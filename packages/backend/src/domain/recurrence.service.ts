@@ -35,6 +35,21 @@ export class RecurrenceService {
         const start = new Date(rule.seriesStartsAt);
         const end = new Date(rule.seriesEndsAt);
 
+        // Bound both iteration and input collection sizes before allocating dates.
+        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) ||
+            end < start || end.getTime() - start.getTime() > 3660 * 86_400_000) {
+            throw new RoomKitError('INVALID_RECURRENCE_RANGE', 'Series must be ordered and span at most 3660 days');
+        }
+        if (!Object.values(RecurrenceFrequency).includes(rule.frequency) ||
+            !Array.isArray(rule.daysOfWeek) || rule.daysOfWeek.length > 7 ||
+            rule.daysOfWeek.some(day => !Number.isInteger(day) || day < 0 || day > 6) ||
+            new Set(rule.daysOfWeek).size !== rule.daysOfWeek.length ||
+            (rule.calendarWeeks && (rule.calendarWeeks.length > 53 || rule.calendarWeeks.some(week => !Number.isInteger(week) || week < 1 || week > 53))) ||
+            (rule.exceptionDates?.length ?? 0) > 10_000 ||
+            rule.exceptionDates?.some(date => !Number.isFinite(new Date(date).getTime()))) {
+            throw new RoomKitError('INVALID_RECURRENCE_RULE', 'Invalid or oversized recurrence inputs');
+        }
+
         // Build a set of exception date strings for fast lookup (YYYY-MM-DD)
         const exceptionSet = new Set(
             (rule.exceptionDates ?? []).map((d) => this.toDateString(new Date(d))),
